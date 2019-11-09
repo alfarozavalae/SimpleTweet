@@ -13,7 +13,8 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-        <activity android:name=".CircularTransform"></activity>
+        <activity android:name=".ComposeActivity"></activity>
+        <activity android:name=".CircularTransform" />
         <activity android:name=".models.CircularTransform" />
         <activity android:name=".EndlessRecyclerViewScrollListener" />
         <activity android:name=".TweetsAdapter" />

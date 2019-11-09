@@ -7,20 +7,28 @@ import android.os.Bundle;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.parceler.Parcels;
+
 import okhttp3.Headers;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.content.Intent;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class TimelineActivity extends AppCompatActivity {
 
     public static final String TAG = "TimelineActivity";
+    private final int REQUEST_CODE = 15;
 
     TwitterClient client;
     RecyclerView rvTweets;
@@ -78,6 +86,40 @@ public class TimelineActivity extends AppCompatActivity {
         populateHomeTimeline();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // inflate the menu; this adds items to the action bar if present
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.compose) {
+            // compose icon has been selected
+            //navigate to the compose activity
+            Intent intent = new Intent (this, ComposeActivity.class);
+            startActivityForResult(intent, REQUEST_CODE);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            // GET DATA FROM THE INTENT (tweet object)
+            Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+            super.onActivityResult(requestCode, resultCode, data);
+            // update the RV with the new tweet
+            tweets.add(0, tweet);
+            // Modify data source of tweets
+            adapter.notifyItemInserted(0);
+            rvTweets.smoothScrollToPosition(0);
+            // Update the adapter
+        }
+    }
     private void loadMoreData() {
         // Send an API request to retrieve appropriate paginated data
         client.getNextPageOfTweets(new JsonHttpResponseHandler() {
