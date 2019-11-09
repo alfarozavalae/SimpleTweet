@@ -2,10 +2,14 @@ package com.codepath.apps.restclienttemplate;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 import android.content.Intent;
@@ -28,7 +32,7 @@ public class ComposeActivity extends AppCompatActivity {
 
     EditText  etCompose;
     Button btnTweet;
-
+    TextView tweetlenght;
     TwitterClient client;
 
     @Override
@@ -36,10 +40,43 @@ public class ComposeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose);
 
-        client = TwitterApplication.getRestClient(this);
-
         etCompose = findViewById(R.id.etCompose);
         btnTweet = findViewById(R.id.btnTweet);
+        tweetlenght = findViewById(R.id.tweetlenght);
+        client = TwitterApplication.getRestClient(this);
+
+
+        etCompose.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                tweetlenght.setText(String.valueOf(charSequence.length()));
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                tweetlenght.setText(String.valueOf(charSequence.length()));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() > MAX_TWEET_LENGHT ){
+                    tweetlenght.setTextColor(Color.RED);
+                    btnTweet.setEnabled(false);
+                }
+
+                else{
+                    tweetlenght.setTextColor(Color.BLACK);
+                    btnTweet.setEnabled(true);
+                }
+//                tweetLength.setText(String.valueOf(editable.length()));
+            }
+        });
+
+
+
+
 
         // Set click listenner on button
         btnTweet.setOnClickListener(new View.OnClickListener() {
